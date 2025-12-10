@@ -8,6 +8,9 @@ const server = net.createServer((socket) => {
 
   socket.on("data", (chunk) => {
     console.log("Received data from client", chunk.toString());
+
+    // send same data to client
+    socket.write(chunk);
   });
 
   socket.on("end", () => {
