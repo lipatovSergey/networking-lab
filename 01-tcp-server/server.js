@@ -5,12 +5,19 @@ const PORT = 4000;
 
 const server = net.createServer((socket) => {
   console.log("New client connected");
+  let buffer = "";
 
   socket.on("data", (chunk) => {
-    console.log("Received data from client", chunk.toString());
+    buffer += chunk.toString("utf8");
 
-    // send same data to client
-    socket.write(chunk);
+    let newLineIndex;
+    while ((newLineIndex = buffer.indexOf("\n")) !== -1) {
+      const rawMessage = buffer.slice(0, newLineIndex); // string without \n
+      buffer = buffer.slice(newLineIndex + 1); // store rest in the buffer
+      const message = rawMessage.trim();
+      console.log("Full message from client ", message);
+      socket.write(`You said: ${message}\n`);
+    }
   });
 
   socket.on("end", () => {
