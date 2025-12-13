@@ -107,4 +107,72 @@ Buffering is **required**, otherwise parts of data or characters may be lost.
 - Buffering and parsing by delimiter is a basic pattern for text protocols.
 - HTTP, Redis, SMTP, and many other protocols work using the same idea.
 
+### 8. Reliability, ACK, and connection closing (FIN)
+
+TCP guarantees reliable delivery **at the byte level**, not at the message level.
+
+To do this, TCP internally uses:
+
+- **byte sequence numbers** — every byte in the stream has a position,
+- **ACK (acknowledgment)** messages — confirmation of received bytes,
+- **retransmission** — lost bytes are sent again automatically.
+
+How ACK works conceptually:
+
+- the receiver confirms **all bytes up to a certain number**,
+- an ACK like `ACK = 5002` means:
+
+  > “I have received all bytes up to 5001 and I am waiting for byte 5002.”
+
+Important points about ACK:
+
+- ACK is **not sent after every byte**,
+- ACK usually confirms **a whole range of bytes at once**,
+- if an ACK does not move forward for some time, the sender assumes data was lost and retransmits it.
+
+##### Data loss handling
+
+If some bytes are lost during transmission:
+
+- the receiver keeps acknowledging the **last continuous byte received**,
+- the sender detects that progress has stopped,
+- the sender **retransmits the missing bytes**.
+
+This process is **completely invisible** to the application code.
+From Node.js point of view:
+
+- either data arrives correctly,
+- or the connection is closed with an error.
+
+##### Connection termination (FIN)
+
+TCP does not guess when data ends.
+The end of the byte stream is always **explicitly signaled**.
+
+To finish sending data, a side sends a **FIN** flag, which means:
+
+> “I will not send any more bytes.”
+
+Important details:
+
+- FIN is **not a data byte**, it is a control signal,
+- FIN does **not** mean that the other side has received all data yet,
+- FIN only means that **this side is done sending**.
+
+A TCP connection is closed **in both directions**:
+
+1. one side sends `FIN`,
+2. the other side acknowledges it (`ACK`),
+3. the other side sends its own `FIN`,
+4. the first side acknowledges it.
+
+Only after this exchange is the TCP connection fully closed.
+
+##### Key takeaway about reliability
+
+- TCP guarantees **ordered and reliable delivery of bytes**,
+- TCP does **not know** about messages, requests, or responses,
+- TCP does **not know** how many bytes “should” be sent,
+- message boundaries and data length must be defined by a protocol **above TCP** (for example, HTTP).
+
 ---
