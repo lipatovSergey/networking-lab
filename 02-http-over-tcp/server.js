@@ -36,10 +36,16 @@ const server = net.createServer((socket) => {
       headers: headers,
     };
     console.log("New request: ", request);
+
+    const body = "Hello from raw HTTP!";
+    const contentByteLength = Buffer.byteLength(body, "utf8");
+    const response = `HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: ${contentByteLength}\r\nConnection: close\r\n\r\n${body}`;
+    socket.write(response);
+    socket.end();
   });
 
   socket.on("end", () => {
-    console.log("Client disconnected (end");
+    console.log("Client disconnected (end)");
   });
 
   socket.on("close", () => {
