@@ -1,0 +1,14 @@
+{
+  "name": "02-http-over-tcp",
+  "version": "1.0.0",
+  "main": "client.js",
+  "scripts": {
+    "server": "node server.js",
+    "client": "node client.js",
+    "dev": "node server.js & sleep 1 && node client.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
