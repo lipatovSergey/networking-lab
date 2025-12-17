@@ -1,0 +1,16 @@
+{
+  "name": "05-load-testing",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "load:test": "autocannon http://localhost:3000",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "autocannon": "^8.0.0"
+  }
+}

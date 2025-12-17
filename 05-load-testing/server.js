@@ -1,0 +1,12 @@
+const http = require("http");
+
+const PORT = 3000;
+const server = http.createServer((_req, res) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("Hello from raw Node HTTP");
+});
+
+server.listen(PORT, () => {
+  console.log("Server running on http://localhost:3000");
+});
